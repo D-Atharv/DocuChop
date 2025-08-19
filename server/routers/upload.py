@@ -2,6 +2,7 @@ from fastapi import APIRouter, UploadFile, File
 import shutil
 import os
 from services.parser import parse_document
+from services.embeddings import chunk_text, embed_chunks
 
 router = APIRouter()
 
@@ -18,9 +19,16 @@ async def upload_file(file: UploadFile = File(...)):
     # Parse document into text
     text = parse_document(file_path)
 
+    # Chunk text
+    chunks = chunk_text(text, chunk_size=500, overlap=50)
+
+    # Generate embeddings
+    embeddings = embed_chunks(chunks)
+
     return {
         "filename": file.filename,
         "path": file_path,
-        "extracted_text_preview": text[:500],  # return preview only
-        "total_chars": len(text),
+        "num_chunks": len(chunks),
+        "embedding_dim": len(embeddings[0]) if embeddings else 0,
+        "sample_chunk": chunks[0] if chunks else "",
     }

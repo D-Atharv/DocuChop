@@ -9,3 +9,6 @@ python-docx==1.1.2
 pytesseract==0.3.13
 Pillow==10.4.0
 unstructured==0.15.12
+
+sentence-transformers==3.0.1
+torch==2.4.1
